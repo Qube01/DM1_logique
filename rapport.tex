@@ -1,0 +1,98 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with`a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{float}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings} % import code
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+
+\title{Logique et preuves - DM1}
+\author{LOLUM Théophane, \\PERDRIZET Corentin, \\PERIN Côme}
+
+\begin{document}
+\maketitle
+
+\section{}
+
+\text{La formalisation des dépendances et conflits en logique propositionnelle donne :}
+
+\begin{align*}
+    (a\implies(b\land (c\lor d)\land(d \lor e)\land(d \lor f))) \\
+    \land(b\implies g)\land(c\implies(g\lor h\lor i))\land(c\implies \neg e) \\
+    \land(d\implies h\lor i)\land(e \implies\neg c)\land(e\implies\neg i) \\
+    \land(e\implies j)\land(f\implies j)\land(g\implies\neg h)
+\end{align*}
+
+\lstset{language=Verilog}
+
+Le code du fichier \texttt{fig4.smt} :
+    \begin{lstlisting}
+(declare-const a Bool)
+(declare-const b Bool)
+(declare-const c Bool)
+(declare-const d Bool)
+(declare-const e Bool)
+(declare-const f Bool)
+(declare-const g Bool)
+(declare-const h Bool)
+(declare-const i Bool)
+(declare-const j Bool)
+
+(assert (implies a (and b (or c d) (or d e) (or d f))))
+(assert (implies b g))
+(assert (implies c (or g h i)))
+(assert (implies c (not e)))
+(assert (implies d (or h i)))
+(assert (implies e (not c)))
+(assert (implies e (not i)))
+(assert (implies e j))
+(assert (implies f j))
+(assert (implies g (not h)))
+    \end{lstlisting}
+    
+pour spécifier à Z3 quels sont les packages actuellement installés il faut ajouter les \texttt{assert} correspondant parmi les lignes précédentes.
+    
+\textit{exemple : }\\
+Si le package p est installé, on ajoute : \texttt{(assert p)}
+
+
+\section{}
+Le code du fichier \texttt{ex2.smt} : 
+\begin{lstlisting}
+(assert h)
+(assert b)
+
+(check-sat)
+\end{lstlisting}
+
+On possède désormais une formule propositionnelle logique satisfiable si et seulement si le package b peut être installé lorsque h est installé.
+
+\lstset{language=bash}
+\begin{lstlisting}
+    $ cat fig4.smt ex2.smt | z3 -smt2 -in
+    unsat
+\end{lstlisting}
+
+La formule est bien insatisfiable.
+
+
+\section{}
+\section{}
+\section{}
+\section{}
+\section{}
+
+
+\end{document}
